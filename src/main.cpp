@@ -139,6 +139,10 @@ int main()
       {
         std::cout << "type is a shell builtin\n";
       }
+      else if (text == "pwd")
+      {
+        std::cout << "pwd is a shell builtin\n";
+      }
       else
       {
         std::string command_path = get_path(text);
