@@ -13,6 +13,7 @@ const char PATH_SEPARATOR = ':';
 const std::string EXTENSION = "";
 #endif
 
+static std::string WORKING_DIR = "/app";
 const char *env_var_name = "PATH";
 const char *env_var_value = getenv(env_var_name);
 
@@ -109,7 +110,6 @@ int main()
     {
       return 0;
     }
-
     else if (stackCommands[0] == "echo")
     {
       std::cout << input.substr(5) << std::endl;
@@ -121,7 +121,31 @@ int main()
     }
     else if (stackCommands[0] == "cd")
     {
-      // Change directory (if needed)
+      if (stackCommands.size() < 2)
+      {
+        std::cerr << "cd: missing argument" << std::endl;
+        continue;
+      }
+
+      std::string targetPath = stackCommands[1];
+
+      try
+      {
+        std::filesystem::path newPath = targetPath;
+
+        if (std::filesystem::exists(newPath) && std::filesystem::is_directory(newPath))
+        {
+          std::filesystem::current_path(newPath);
+        }
+        else
+        {
+          std::cerr << "cd: " << targetPath << ": No such file or directory" << std::endl;
+        }
+      }
+      catch (const std::filesystem::filesystem_error &e)
+      {
+        std::cerr << "cd: " << targetPath << ": " << e.what() << std::endl;
+      }
     }
     else if (stackCommands[0] == "type")
     {
